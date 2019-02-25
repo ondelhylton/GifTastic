@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>GIPHY API</title>
+
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
+
+</head>
+<body>
+
+
+  
+    
+<!-- Header-->
+
+    <div class="jumbotron" style="background-color: rgb(34, 15, 26) ; color: white; height: 200px">
+        <h1 class="text-center">
+          <strong>
+            <i class="fa fa-building-o"></i> World City GIFS</strong>
+            
+        </h1>
+      </div>
+
+      
+
+
+<!-- One Column: Search and Create Button to Button List-->
+
+
+<div class="col-lg-4">
+  <div class="addcity">
+      <div class="form-group">
+          <label for="search">Add City:</label>
+          <input type="text" class="form-control" id="add-city-form">
+        </div>
+
+      <button add-city="" type="button" class="btn btn-success" id="add-city"><i class="fa fa-plus"></i> Add City</button>
+  </div>
+
+
+  <br>
+  <hr style="border: none; border-bottom: 1px solid gray; width:95%">
+  <br>
+
+
+
+      <!-- Pre-loaded Button List-->
+      <div class="button-holder">
+
+   
+
+        <strong>Pre-selected Cities:</strong>
+        <br>
+        <br>
+
+        
+        <button city="New York City" type="button" class="btn btn-warning" id="city-container"><i class="fa fa-building-o"></i> New York City</button>
+        <button city="Paris" type="button" class="btn btn-warning" id="city-container"><i class="fa fa-building-o"></i> Paris</button>
+        <button city="London" type="button" class="btn btn-warning" id="city-container"><i class="fa fa-building-o"></i> London</button>
+        <button city="Miami" type="button" class="btn btn-warning" id="city-container"><i class="fa fa-building-o"></i> Miami</button>
+        <button city="Dubai" type="button" class="btn btn-warning" id="city-container"><i class="fa fa-building-o"></i> Dubai</button>
+        <button city="Los Angeles" type="button" class="btn btn-warning" id="city-container"><i class="fa fa-building-o"></i> Los Angeles</button>
+        <br>
+        <div city2="" id="user-button"></div>
+      </div>
+</div>
+
+
+<!-- Second Column to Display Gifs with Rating-->
+    <div class="col-lg-8">
+
+      <h2 id="city-name" style="background-color: orangered; font-size:40px; color: white;"></h2>
+
+      <div class="row">
+          <div class="col-md-8">
+      <div id="gifs-appear-here">
+      <div id="stills-appear-here">
+        
+
+          <h1 id="rating-appear-here">
+              <br><br>
+   
+            </h1>
+
+        </div>
+        </div>
+      </div>
+        
+      <br>
+      <br>
+      <br>
+  </div>
+
+
+
+  <!-- Javascript-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+
+
+
+
+
+  $("button").on("click", function() {
+
+    var city = $(this).attr("city");
+    
+
+    // Check if grabbing city attribute
+          console.log(city) 
+
+
+                // Constructing a queryURL using the animal name
+      var giphyURL = "https://api.giphy.com/v1/gifs/search?q=" +
+        city + "&limit=10" + "&api_key=4lQv34Yi4HdwOQsO36qRYXS2YyRRxY5K";
+
+
+// Performing an AJAX request with the queryURL
+$.ajax({
+        url: giphyURL,
+        method: "GET"
+      })
+        // After data comes back from the request
+        .then(function(response) {
+          console.log(giphyURL);
+
+          console.log(response.data);
+
+          // storing the data from the AJAX request in the results variable
+          var results = response.data;
+
+          
+          $("#city-name").text("City:  " + city);
+
+          // Looping through each result item
+          for (var i = 0; i < results.length; i++) {
+
+            // Creating and storing a div tag
+            var cityDiv = $("<div>");
+
+            // Creating a paragraph tag with the result item's rating
+            var p = $("<h3>");
+                
+                p.text("↑" + " " + "Rating: " + response.data[i].rating)
+                
+
+            // Creating and storing an image tag
+            var cityImage = $("<img>");
+
+            // Setting the src attribute of the STILL Image
+            cityImage.attr("src", results[i].images.fixed_width_still.url);
+            
+            console.log(cityImage);
+
+              // Setting the src attribute of the GIF Image
+            cityImage.attr("src", results[i].images.fixed_width.url);
+
+
+            // Appending the paragraph and image tag to the citylDiv
+            
+            cityDiv.append(cityImage);
+            var text = cityDiv.append(p);
+
+            
+            // I couldn't figure this out
+            if  ($('#stills-appear-here').data("clicked", true)) {
+            $('#gif-click').click(function() {
+              $('#gifs-appear-here').show();
+             $('#stills-appear-here').hide();
+                $('#pic-click').show();
+              });
+              }
+
+
+              // Prependng the cityDiv to the HTML page in the "#gifs-appear-here" div
+            $("#stills-appear-here").prepend(cityDiv);
+            $("#gifs-appear-here").prepend(cityDiv);
+            $("#text-appear-here").prepend(text);
+          }
+        });
+    });
+
+
+
+// Attempted to create buttons from an array, I didn't get them to call the API..
+
+  var otherCities = ["Singapore", "Hong Kong", "Tokyo" ];
+  console.log(otherCities);
+  
+function renderButtons() {
+
+  $("#user-button").empty();
+
+  // Looping through the array of movies
+  for (var h = 0; h < otherCities.length; h++) {
+
+   
+    var a = $("<button>");
+    // Adding a class
+    a.addClass("btn btn-warning");
+    a.addClass("fa fa-building-o" );
+    // Adding a data-attribute with a value of the movie at index i
+    a.attr("data-name", otherCities[h]);
+    // Providing the button's text with a value of the movie at index i
+    a.text(" " + otherCities[h]);
+    // Adding the button to the HTML
+    $("#user-button").append(a);
+    
+  }
+  
+}
+
+
+
+//Take form data and create button
+
+var userCity
+
+$('#add-city').on('click', function(event) {
+
+  event.preventDefault();
+
+     // Get inputs
+     userCity = $('#add-city-form')
+          .val()
+          .trim();
+          console.log(userCity);
+        
+          otherCities.push(userCity);
+          renderButtons();
+                         
+  });
+
+  renderButtons();
+
+
+
+
+
+</script>
+</body>
+
+</html>
+
+
+
+
